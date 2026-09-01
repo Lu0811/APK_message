@@ -25,13 +25,24 @@ jobs:
     - name: Restaurar dependencias
       run: dotnet restore DebtMessageManager.csproj
 
-    - name: Compilar y empaquetar iOS
+    - name: Publicar aplicación para iOS
       run: |
-        dotnet build DebtMessageManager.csproj -f net10.0-ios -c Release
+        dotnet publish DebtMessageManager.csproj -f net10.0-ios -c Release -p:ArchiveOnBuild=true
 
-    - name: Subir artefacto compilado
+    - name: Empaquetar archivo .ipa para Sideloadly / AltStore
+      run: |
+        mkdir -p Payload
+        APP_PATH=$(find bin/Release/net10.0-ios -name "*.app" -type d | head -n 1)
+        echo "Directorio de la app encontrado: $APP_PATH"
+        cp -r "$APP_PATH" Payload/
+        zip -r DebtMessageManager.ipa Payload
+        mkdir -p output
+        mv DebtMessageManager.ipa output/
+
+    - name: Subir instalador IPA
       uses: actions/upload-artifact@v4
       with:
-        name: DebtMessageManager-iOS-Build
-        path: bin/Release/net10.0-ios/
+        name: DebtMessageManager-iOS-IPA
+        path: output/DebtMessageManager.ipa
+
 
