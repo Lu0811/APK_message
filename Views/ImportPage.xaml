@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:DebtMessageManager.ViewModels"
+             x:Class="DebtMessageManager.Views.ImportPage"
+             x:DataType="viewmodels:ImportViewModel"
+             Title="Importar CSV"
+             BackgroundColor="#F3F4F6">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="16">
+
+            <!-- Selector de Archivo -->
+            <Border BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E2E8F0" StrokeThickness="1" Padding="16">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="1. SELECCIÓN DE ARCHIVO CSV" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" />
+                    <Label Text="{Binding ArchivoSeleccionado, StringFormat='Archivo: {0}'}" FontSize="13" TextColor="#475569" />
+                    
+                    <Button Text="📁 Seleccionar Archivo CSV" 
+                            Command="{Binding SeleccionarArchivoCommand}" 
+                            BackgroundColor="#2563EB" 
+                            TextColor="White" 
+                            CornerRadius="8" 
+                            HeightRequest="44" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Sección de Mapeo de Columnas -->
+            <Border IsVisible="{Binding TieneArchivo}" BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E2E8F0" StrokeThickness="1" Padding="16">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="2. MAPEO DE COLUMNAS" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" />
+                    <Label Text="Verifica que cada campo corresponda con la columna de tu archivo:" FontSize="12" TextColor="#64748B" />
+
+                    <CollectionView ItemsSource="{Binding MapeoColumnas}" HeightRequest="190">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="viewmodels:ColumnMappingItem">
+                                <Grid ColumnDefinitions="140,*" ColumnSpacing="8" Margin="0,4">
+                                    <Label Grid.Column="0" Text="{Binding CampoInterno}" FontAttributes="Bold" VerticalOptions="Center" TextColor="#334155" />
+                                    <Entry Grid.Column="1" Text="{Binding EncabezadoCsv}" Placeholder="Nombre columna CSV" BackgroundColor="#F8FAFC" HeightRequest="38" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Button Text="🔄 Revalidar Mapeo" Command="{Binding ValidarArchivoCommand}" BackgroundColor="#F1F5F9" TextColor="#2563EB" CornerRadius="8" HeightRequest="38" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Resumen de Validación -->
+            <Border IsVisible="{Binding TieneArchivo}" BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E2E8F0" StrokeThickness="1" Padding="16">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="3. RESULTADO DE VALIDACIÓN" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" />
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                        <Border Grid.Column="0" BackgroundColor="#F8FAFC" StrokeShape="RoundRectangle 8" Padding="8">
+                            <VerticalStackLayout HorizontalOptions="Center">
+                                <Label Text="Total" FontSize="11" TextColor="#64748B" HorizontalTextAlignment="Center"/>
+                                <Label Text="{Binding TotalRegistros}" FontSize="18" FontAttributes="Bold" TextColor="#1E293B" HorizontalTextAlignment="Center"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="1" BackgroundColor="#ECFDF5" StrokeShape="RoundRectangle 8" Padding="8">
+                            <VerticalStackLayout HorizontalOptions="Center">
+                                <Label Text="✓ Válidos" FontSize="11" TextColor="#059669" HorizontalTextAlignment="Center"/>
+                                <Label Text="{Binding RegistrosValidos}" FontSize="18" FontAttributes="Bold" TextColor="#059669" HorizontalTextAlignment="Center"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="2" BackgroundColor="#FEF2F2" StrokeShape="RoundRectangle 8" Padding="8">
+                            <VerticalStackLayout HorizontalOptions="Center">
+                                <Label Text="⚠ Inválidos" FontSize="11" TextColor="#DC2626" HorizontalTextAlignment="Center"/>
+                                <Label Text="{Binding RegistrosInvalidos}" FontSize="18" FontAttributes="Bold" TextColor="#DC2626" HorizontalTextAlignment="Center"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <!-- Lista de Errores detectados -->
+                    <VerticalStackLayout IsVisible="{Binding TieneErrores}" Spacing="6" Margin="0,6,0,0">
+                        <Label Text="Detalle de observaciones encontradas:" FontSize="12" FontAttributes="Bold" TextColor="#DC2626" />
+                        <CollectionView ItemsSource="{Binding ListaErrores}" HeightRequest="100">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="x:String">
+                                    <Label Text="{Binding .}" FontSize="11" TextColor="#991B1B" Margin="0,2" />
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+
+                    <Button Text="💾 IMPORTAR REGISTROS VÁLIDOS A BASE DE DATOS" 
+                            Command="{Binding ImportarCommand}" 
+                            BackgroundColor="#059669" 
+                            TextColor="White" 
+                            FontAttributes="Bold" 
+                            CornerRadius="8" 
+                            HeightRequest="46" 
+                            Margin="0,8,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Estado -->
+            <Label Text="{Binding EstadoImportacion}" TextColor="#475569" FontSize="12" HorizontalTextAlignment="Center" Margin="0,6" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#2563EB" HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
+

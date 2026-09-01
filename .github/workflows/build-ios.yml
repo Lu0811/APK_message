@@ -1,0 +1,37 @@
+name: Compilar iOS e IPA en la nube
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-14
+
+    steps:
+    - name: Clonar repositorio
+      uses: actions/checkout@v4
+
+    - name: Configurar .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+
+    - name: Instalar carga de trabajo MAUI iOS
+      run: |
+        dotnet workload install maui-ios
+
+    - name: Restaurar dependencias
+      run: dotnet restore DebtMessageManager.csproj
+
+    - name: Compilar y empaquetar iOS
+      run: |
+        dotnet build DebtMessageManager.csproj -f net10.0-ios -c Release
+
+    - name: Subir artefacto compilado
+      uses: actions/upload-artifact@v4
+      with:
+        name: DebtMessageManager-iOS-Build
+        path: bin/Release/net10.0-ios/
+

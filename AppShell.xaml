@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="DebtMessageManager.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:DebtMessageManager.Views"
+    Title="DebtMessageManager"
+    BackgroundColor="#1E293B"
+    ForegroundColor="White"
+    TitleColor="White">
+
+    <TabBar>
+        <Tab Title="Dashboard" Route="DashboardPage">
+            <ShellContent ContentTemplate="{DataTemplate views:DashboardPage}" />
+        </Tab>
+
+        <Tab Title="Importar" Route="ImportPage">
+            <ShellContent ContentTemplate="{DataTemplate views:ImportPage}" />
+        </Tab>
+
+        <Tab Title="Clientes" Route="ClientesPage">
+            <ShellContent ContentTemplate="{DataTemplate views:ClientesPage}" />
+        </Tab>
+
+        <Tab Title="Mensajes" Route="MensajesPage">
+            <ShellContent ContentTemplate="{DataTemplate views:MensajesPage}" />
+        </Tab>
+
+        <Tab Title="Configuración" Route="ConfiguracionPage">
+            <ShellContent ContentTemplate="{DataTemplate views:ConfiguracionPage}" />
+        </Tab>
+    </TabBar>
+
+</Shell>
+

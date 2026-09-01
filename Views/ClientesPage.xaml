@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:DebtMessageManager.ViewModels"
+             xmlns:models="clr-namespace:DebtMessageManager.Models"
+             x:Class="DebtMessageManager.Views.ClientesPage"
+             x:DataType="viewmodels:ClientesViewModel"
+             Title="Clientes"
+             BackgroundColor="#F3F4F6">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="16" RowSpacing="12">
+
+        <!-- Buscador -->
+        <SearchBar Grid.Row="0" 
+                   Placeholder="Buscar por nombre o número..." 
+                   Text="{Binding TextoBusqueda}"
+                   BackgroundColor="White" 
+                   CancelButtonColor="#2563EB" />
+
+        <!-- Filtros por Chips / Botones -->
+        <ScrollView Grid.Row="1" Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+            <HorizontalStackLayout Spacing="8">
+                <Button Text="Todos" Command="{Binding CambiarFiltroCommand}" CommandParameter="Todos" BackgroundColor="#E2E8F0" TextColor="#1E293B" CornerRadius="16" HeightRequest="36" Padding="12,0" />
+                <Button Text="🟢 Sin Deuda" Command="{Binding CambiarFiltroCommand}" CommandParameter="Sin Deuda" BackgroundColor="#D1FAE5" TextColor="#065F46" CornerRadius="16" HeightRequest="36" Padding="12,0" />
+                <Button Text="🟡 Vigentes" Command="{Binding CambiarFiltroCommand}" CommandParameter="Vigentes" BackgroundColor="#FEF3C7" TextColor="#92400E" CornerRadius="16" HeightRequest="36" Padding="12,0" />
+                <Button Text="🔴 Vencidos" Command="{Binding CambiarFiltroCommand}" CommandParameter="Vencidos" BackgroundColor="#FEE2E2" TextColor="#991B1B" CornerRadius="16" HeightRequest="36" Padding="12,0" />
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <!-- Contador -->
+        <Label Grid.Row="2" Text="{Binding ResumenConteo}" FontSize="12" TextColor="#64748B" Margin="4,0" />
+
+        <!-- Lista de Clientes -->
+        <RefreshView Grid.Row="3" Command="{Binding CargarCommand}" IsRefreshing="{Binding IsBusy}">
+            <CollectionView ItemsSource="{Binding ClientesFiltrados}" SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="8" Margin="0,40,0,0">
+                        <Label Text="👥" FontSize="36" HorizontalTextAlignment="Center" />
+                        <Label Text="No se encontraron clientes" FontSize="15" FontAttributes="Bold" TextColor="#64748B" HorizontalTextAlignment="Center" />
+                        <Label Text="Importa un archivo CSV para comenzar" FontSize="13" TextColor="#94A3B8" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Cliente">
+                        <Border BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E2E8F0" StrokeThickness="1" Margin="0,0,0,10" Padding="14">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ClientesViewModel}}, Path=AbrirClienteCommand}" CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="4">
+                                <!-- Nombre del Cliente -->
+                                <Label Grid.Row="0" Grid.Column="0" Text="{Binding Nombre}" FontSize="16" FontAttributes="Bold" TextColor="#0F172A" />
+
+                                <!-- Badge de Estado -->
+                                <Border Grid.Row="0" Grid.Column="1" BackgroundColor="{Binding EstadoBadgeColor}" StrokeShape="RoundRectangle 6" StrokeThickness="0" Padding="8,2">
+                                    <Label Text="{Binding EstadoTexto}" FontSize="11" TextColor="White" FontAttributes="Bold" />
+                                </Border>
+
+                                <!-- Deuda y Vencimiento -->
+                                <Label Grid.Row="1" Grid.Column="0" Text="{Binding MontoFormateado, StringFormat='Deuda: {0}'}" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" />
+                                <Label Grid.Row="1" Grid.Column="1" Text="{Binding FechaVencimientoFormateada, StringFormat='Vence: {0}'}" FontSize="12" TextColor="#64748B" />
+
+                                <!-- Teléfonos Resumen -->
+                                <Label Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding TelefonosResumen, StringFormat='📞 {0}'}" FontSize="12" TextColor="#475569" Margin="0,2,0,0" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>
+

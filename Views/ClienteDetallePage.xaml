@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:DebtMessageManager.ViewModels"
+             xmlns:models="clr-namespace:DebtMessageManager.Models"
+             x:Class="DebtMessageManager.Views.ClienteDetallePage"
+             x:DataType="viewmodels:ClienteDetalleViewModel"
+             Title="Detalle del Cliente"
+             BackgroundColor="#F3F4F6">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="16">
+
+            <!-- Ficha de Datos Principales -->
+            <Border BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E2E8F0" StrokeThickness="1" Padding="16">
+                <VerticalStackLayout Spacing="12">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0" Text="{Binding Nombre}" FontSize="20" FontAttributes="Bold" TextColor="#0F172A" />
+                        <Border Grid.Column="1" BackgroundColor="{Binding EstadoBadgeColor}" StrokeShape="RoundRectangle 6" StrokeThickness="0" Padding="8,2">
+                            <Label Text="{Binding EstadoTexto}" FontSize="12" TextColor="White" FontAttributes="Bold" />
+                        </Border>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" Color="#E2E8F0" />
+
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" RowSpacing="8">
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="0">
+                            <Label Text="Deuda Total" FontSize="11" TextColor="#64748B" />
+                            <Label Text="{Binding MontoDeuda}" FontSize="16" FontAttributes="Bold" TextColor="#1E293B" />
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="1">
+                            <Label Text="Fecha Vencimiento" FontSize="11" TextColor="#64748B" />
+                            <Label Text="{Binding FechaVencimiento}" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" />
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Row="1" Grid.Column="0">
+                            <Label Text="Mora / Retraso" FontSize="11" TextColor="#64748B" />
+                            <Label Text="{Binding DiasRetrasoTexto}" FontSize="14" FontAttributes="Bold" TextColor="#DC2626" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Sección de Teléfonos -->
+            <Border BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E2E8F0" StrokeThickness="1" Padding="16">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="NÚMEROS TELEFÓNICOS REGISTRADOS" FontSize="13" FontAttributes="Bold" TextColor="#1E293B" />
+
+                    <!-- Agregar nuevo teléfono -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <Entry Grid.Column="0" Placeholder="Agregar otro teléfono (ej. 987654321)" Text="{Binding NuevoNumero}" Keyboard="Telephone" HeightRequest="40" BackgroundColor="#F8FAFC" />
+                        <Button Grid.Column="1" Text="➕" Command="{Binding AgregarTelefonoCommand}" BackgroundColor="#2563EB" TextColor="White" WidthRequest="44" HeightRequest="40" CornerRadius="8" />
+                    </Grid>
+
+                    <CollectionView ItemsSource="{Binding Telefonos}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Telefono">
+                                <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8" Margin="0,4">
+                                    <Label Grid.Column="0" Text="{Binding Numero}" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" TextColor="#1E293B" />
+                                    
+                                    <Button Grid.Column="1" 
+                                            Text="{Binding Activo, Converter={x:Null}}" 
+                                            TextTransform="None"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ClienteDetalleViewModel}}, Path=AlternarTelefonoActivoCommand}" 
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="#F1F5F9"
+                                            TextColor="#334155"
+                                            HeightRequest="34"
+                                            Padding="8,0"
+                                            CornerRadius="6" />
+
+                                    <Button Grid.Column="2" 
+                                            Text="💬 Enviar SMS" 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ClienteDetalleViewModel}}, Path=EnviarSmsManualCommand}" 
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="#059669"
+                                            TextColor="White"
+                                            FontSize="12"
+                                            HeightRequest="34"
+                                            Padding="10,0"
+                                            CornerRadius="6" />
+
+                                    <Button Grid.Column="3" 
+                                            Text="🗑️" 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ClienteDetalleViewModel}}, Path=EliminarTelefonoCommand}" 
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="#FEE2E2"
+                                            TextColor="#991B1B"
+                                            HeightRequest="34"
+                                            WidthRequest="34"
+                                            Padding="0"
+                                            CornerRadius="6" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Historial de Comunicaciones -->
+            <Border BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E2E8F0" StrokeThickness="1" Padding="16">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="HISTORIAL DE COMUNICACIONES SMS" FontSize="13" FontAttributes="Bold" TextColor="#1E293B" />
+
+                    <CollectionView ItemsSource="{Binding Mensajes}">
+                        <CollectionView.EmptyView>
+                            <Label Text="No registra envíos previos de mensajes." FontSize="12" TextColor="#94A3B8" Margin="0,10" HorizontalTextAlignment="Center" />
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Mensaje">
+                                <Border BackgroundColor="#F8FAFC" StrokeShape="RoundRectangle 8" Stroke="#E2E8F0" StrokeThickness="1" Margin="0,0,0,8" Padding="10">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <Label Grid.Column="0" Text="{Binding FechaMostrar}" FontSize="11" TextColor="#64748B" />
+                                            <Border Grid.Column="1" BackgroundColor="{Binding EstadoBadgeColor}" StrokeShape="RoundRectangle 4" StrokeThickness="0" Padding="6,2">
+                                                <Label Text="{Binding Estado}" FontSize="10" TextColor="White" FontAttributes="Bold" />
+                                            </Border>
+                                        </Grid>
+                                        <Label Text="{Binding Contenido}" FontSize="12" TextColor="#334155" />
+                                        <Label Text="{Binding NumeroDestino, StringFormat='Destino: {0}'}" FontSize="11" TextColor="#475569" />
+                                        <Label Text="{Binding Error, StringFormat='Error: {0}'}" IsVisible="{Binding Error, Converter={x:Null}}" FontSize="11" TextColor="#DC2626" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
+

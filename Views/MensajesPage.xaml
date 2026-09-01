@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:DebtMessageManager.ViewModels"
+             xmlns:models="clr-namespace:DebtMessageManager.Models"
+             x:Class="DebtMessageManager.Views.MensajesPage"
+             x:DataType="viewmodels:MensajesViewModel"
+             Title="Mensajes SMS"
+             BackgroundColor="#F3F4F6">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="16" RowSpacing="12">
+
+        <!-- Botones de Acción Superior -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <Button Grid.Column="0" 
+                    Text="🔄 Reintentar Mensajes Fallidos" 
+                    Command="{Binding ReintentarFallidosCommand}" 
+                    IsVisible="{Binding TieneErrores}"
+                    BackgroundColor="#EF4444" 
+                    TextColor="White" 
+                    FontAttributes="Bold" 
+                    CornerRadius="8" 
+                    HeightRequest="42" />
+
+            <Button Grid.Column="1" 
+                    Text="🗑️ Limpiar Historial" 
+                    Command="{Binding LimpiarHistorialCommand}" 
+                    BackgroundColor="#F1F5F9" 
+                    TextColor="#64748B" 
+                    CornerRadius="8" 
+                    HeightRequest="42" />
+        </Grid>
+
+        <!-- Filtros por Chips -->
+        <ScrollView Grid.Row="1" Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+            <HorizontalStackLayout Spacing="8">
+                <Button Text="Todos" Command="{Binding CambiarFiltroCommand}" CommandParameter="Todos" BackgroundColor="#E2E8F0" TextColor="#1E293B" CornerRadius="16" HeightRequest="36" Padding="12,0" />
+                <Button Text="✓ Enviados" Command="{Binding CambiarFiltroCommand}" CommandParameter="Enviados" BackgroundColor="#D1FAE5" TextColor="#065F46" CornerRadius="16" HeightRequest="36" Padding="12,0" />
+                <Button Text="🕒 Programados" Command="{Binding CambiarFiltroCommand}" CommandParameter="Programados" BackgroundColor="#DBEAFE" TextColor="#1E40AF" CornerRadius="16" HeightRequest="36" Padding="12,0" />
+                <Button Text="❌ Errores" Command="{Binding CambiarFiltroCommand}" CommandParameter="Errores" BackgroundColor="#FEE2E2" TextColor="#991B1B" CornerRadius="16" HeightRequest="36" Padding="12,0" />
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <!-- Conteo -->
+        <Label Grid.Row="2" Text="{Binding ResumenConteo}" FontSize="12" TextColor="#64748B" Margin="4,0" />
+
+        <!-- Lista de Mensajes -->
+        <RefreshView Grid.Row="3" Command="{Binding CargarCommand}" IsRefreshing="{Binding IsBusy}">
+            <CollectionView ItemsSource="{Binding MensajesFiltrados}">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="8" Margin="0,40,0,0">
+                        <Label Text="✉️" FontSize="36" HorizontalTextAlignment="Center" />
+                        <Label Text="No hay mensajes en este filtro" FontSize="15" FontAttributes="Bold" TextColor="#64748B" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Mensaje">
+                        <Border BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E2E8F0" StrokeThickness="1" Margin="0,0,0,10" Padding="14">
+                            <VerticalStackLayout Spacing="6">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0" Text="{Binding ClienteNombre}" FontSize="15" FontAttributes="Bold" TextColor="#0F172A" />
+                                    <Border Grid.Column="1" BackgroundColor="{Binding EstadoBadgeColor}" StrokeShape="RoundRectangle 6" StrokeThickness="0" Padding="8,2">
+                                        <Label Text="{Binding Estado}" FontSize="11" TextColor="White" FontAttributes="Bold" />
+                                    </Border>
+                                </Grid>
+
+                                <Label Text="{Binding Contenido}" FontSize="13" TextColor="#334155" LineBreakMode="WordWrap" />
+
+                                <Grid ColumnDefinitions="*,Auto" Margin="0,4,0,0">
+                                    <Label Grid.Column="0" Text="{Binding NumeroDestino, StringFormat='📞 Destino: {0}'}" FontSize="11" TextColor="#64748B" />
+                                    <Label Grid.Column="1" Text="{Binding FechaMostrar}" FontSize="11" TextColor="#64748B" />
+                                </Grid>
+
+                                <Label Text="{Binding Error, StringFormat='⚠ {0}'}" IsVisible="{Binding Error, Converter={x:Null}}" FontSize="11" TextColor="#DC2626" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+    </Grid>
+</ContentPage>
+

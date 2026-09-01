@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:DebtMessageManager.ViewModels"
+             x:Class="DebtMessageManager.Views.DashboardPage"
+             x:DataType="viewmodels:DashboardViewModel"
+             Title="Panel Principal"
+             BackgroundColor="#F3F4F6">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="18">
+
+            <!-- Encabezado -->
+            <Border BackgroundColor="#1E293B" StrokeShape="RoundRectangle 16" StrokeThickness="0" Padding="20">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="GESTOR DE COBRANZAS" TextColor="White" FontSize="20" FontAttributes="Bold" />
+                    <Label Text="Control automatizado y envío de comunicaciones SMS" TextColor="#94A3B8" FontSize="13" />
+                    <Label Text="{Binding MontoTotalDeuda, StringFormat='Cartera Total: {0}'}" TextColor="#38BDF8" FontSize="16" FontAttributes="Bold" Margin="0,6,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Acciones Principales -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Button Grid.Column="0" 
+                        Text="⚡ EJECUTAR CAMPAÑA" 
+                        Command="{Binding EjecutarAutomatizacionCommand}"
+                        BackgroundColor="#2563EB" 
+                        TextColor="White" 
+                        FontAttributes="Bold" 
+                        CornerRadius="10" 
+                        HeightRequest="48" />
+                <Button Grid.Column="1" 
+                        Text="📥 IMPORTAR CSV" 
+                        Command="{Binding IrAImportacionCommand}"
+                        BackgroundColor="#059669" 
+                        TextColor="White" 
+                        FontAttributes="Bold" 
+                        CornerRadius="10" 
+                        HeightRequest="48" />
+            </Grid>
+
+            <!-- Sección Clientes -->
+            <Label Text="ESTADO DE CLIENTES" FontSize="14" FontAttributes="Bold" TextColor="#475569" Margin="4,6,0,0" />
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                <!-- Sin Deuda -->
+                <Border Grid.Column="0" BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E2E8F0" StrokeThickness="1" Padding="12">
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                        <Label Text="🟢 Sin Deuda" FontSize="12" TextColor="#059669" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding SinDeudaCount}" FontSize="22" FontAttributes="Bold" TextColor="#0F172A" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Vigentes -->
+                <Border Grid.Column="1" BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E2E8F0" StrokeThickness="1" Padding="12">
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                        <Label Text="🟡 Vigentes" FontSize="12" TextColor="#D97706" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding VigentesCount}" FontSize="22" FontAttributes="Bold" TextColor="#0F172A" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Vencidos -->
+                <Border Grid.Column="2" BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E2E8F0" StrokeThickness="1" Padding="12">
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                        <Label Text="🔴 Vencidos" FontSize="12" TextColor="#DC2626" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding VencidosCount}" FontSize="22" FontAttributes="Bold" TextColor="#0F172A" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Total Clientes Card -->
+            <Border BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E2E8F0" StrokeThickness="1" Padding="16">
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="Total Clientes Registrados" FontSize="13" TextColor="#64748B" />
+                        <Label Text="{Binding TotalClientes, StringFormat='{0} Clientes en base de datos'}" FontSize="15" FontAttributes="Bold" TextColor="#1E293B" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1" Text="Ver Todos" Command="{Binding IrAClientesCommand}" BackgroundColor="#F1F5F9" TextColor="#2563EB" CornerRadius="8" HeightRequest="38" />
+                </Grid>
+            </Border>
+
+            <!-- Sección Mensajes -->
+            <Label Text="ESTADO DE MENSAJERÍA" FontSize="14" FontAttributes="Bold" TextColor="#475569" Margin="4,6,0,0" />
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                <!-- Pendientes / Programados -->
+                <Border Grid.Column="0" BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E2E8F0" StrokeThickness="1" Padding="12">
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                        <Label Text="🕒 Pendientes" FontSize="11" TextColor="#3B82F6" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding MensajesPendientesCount}" FontSize="20" FontAttributes="Bold" TextColor="#0F172A" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Enviados -->
+                <Border Grid.Column="1" BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E2E8F0" StrokeThickness="1" Padding="12">
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                        <Label Text="✓ Enviados" FontSize="11" TextColor="#10B981" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding MensajesEnviadosCount}" FontSize="20" FontAttributes="Bold" TextColor="#0F172A" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Errores -->
+                <Border Grid.Column="2" BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E2E8F0" StrokeThickness="1" Padding="12">
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                        <Label Text="❌ Errores" FontSize="11" TextColor="#EF4444" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding MensajesErroresCount}" FontSize="20" FontAttributes="Bold" TextColor="#0F172A" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Accesos Secundarios -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,10,0,0">
+                <Button Grid.Column="0" Text="📋 Ver Historial SMS" Command="{Binding IrAMensajesCommand}" BackgroundColor="White" TextColor="#334155" BorderColor="#CBD5E1" BorderWidth="1" CornerRadius="10" HeightRequest="44" />
+                <Button Grid.Column="1" Text="📊 Exportar CSV" Command="{Binding ExportarCsvCommand}" BackgroundColor="White" TextColor="#334155" BorderColor="#CBD5E1" BorderWidth="1" CornerRadius="10" HeightRequest="44" />
+            </Grid>
+
+            <Button Text="⚙️ Configuración y Reglas de Envío" Command="{Binding IrAConfiguracionCommand}" BackgroundColor="#F8FAFC" TextColor="#475569" BorderColor="#E2E8F0" BorderWidth="1" CornerRadius="10" HeightRequest="44" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#2563EB" HorizontalOptions="Center" Margin="0,10,0,0" />
+            <Label Text="{Binding StatusMessage}" IsVisible="{Binding StatusMessage, Converter={x:Null}}" TextColor="#64748B" FontSize="12" HorizontalTextAlignment="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
+
